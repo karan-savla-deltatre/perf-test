@@ -24,7 +24,7 @@ export const options = {
 };
 
 export default function() {
-    console.log(__ENV);
+    console.log(JSON.stringify(__ENV));
     const BASE_URL = !!__ENV.HOST ? `${__ENV.HOST}` : "https://www.the-afc.com/";
 
     group('New Fixtures Endpoints', () => {
