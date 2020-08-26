@@ -13,10 +13,10 @@ let ErrorCount = new Counter("errors");
 
 export const options = {
     stages: [
-        { target: 100, duration: '30s' },
-        { target: 200, duration: '30s' },
-        { target: 100, duration: '30s' },
-        { target: 50, duration: '30s' },
+        { target: 10, duration: '10s' },
+        { target: 20, duration: '10s' },
+        { target: 10, duration: '10s' },
+        { target: 5, duration: '10s' },
     ],
     thresholds: {
         errors: ["count<10"]
