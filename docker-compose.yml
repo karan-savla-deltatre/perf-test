@@ -10,12 +10,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.grafana
-    links:
-      - influxdb
     environment:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_BASIC_ENABLED=false
+      - GF_PATHS_PLUGINS=/data/grafana/plugins
     ports:
       - "3000:3000"
   k6:
