@@ -1,6 +1,6 @@
 import http from "k6/http";
 import { check, sleep, group } from "k6";
-import { Counter } from "k6/metrics";
+import { Counter, Trend } from "k6/metrics";
 
 const fixtures = [
     { url: "competitions/afc-champions-league/fixtures/2020/_config", tag: "AFC CL Fixtures" },
@@ -10,6 +10,7 @@ const fixtures = [
 ]
 
 let ErrorCount = new Counter("errors");
+let FixturesTrend = new Trend('Fixtures Trend');
 
 export const options = {
     stages: [
@@ -34,6 +35,8 @@ export default function() {
         }
         let responses = http.batch(list);
 
+        let respCLFixtures = responses['AFC CL Fixtures'];
+
         const results = Object.values(responses).map(res => res.status);
 
         const len = results.filter(r => r !== 200).length;
@@ -41,6 +44,8 @@ export default function() {
         check(results, {
             "Errors": (r) => r.status === 200
         });
+
+        FixturesTrend.add(respCLFixtures.timings.duration);
 
         if (len > 0)
             ErrorCount.add(len);
