@@ -1,6 +1,6 @@
 import http from "k6/http";
 import { check, sleep, group } from "k6";
-import { Counter, Rate } from "k6/metrics";
+import { Counter, Trend } from "k6/metrics";
 
 
 const requests = [
@@ -10,13 +10,14 @@ const requests = [
 ]
 
 let ErrorCount = new Counter("errors");
+let HPTrend = new Trend("AFC HP");
 
 export const options = {
     stages: [
-        { target: 100, duration: '30s' },
-        { target: 200, duration: '30s' },
+        { target: 50, duration: '30s' },
         { target: 100, duration: '30s' },
         { target: 50, duration: '30s' },
+        { target: 20, duration: '30s' },
     ],
     thresholds: {
         errors: ["count<10"]
@@ -27,20 +28,23 @@ export default function() {
     const BASE_URL = `${__ENV.HOST}`;
 
     group('AFC HP Endpoints', () => {
-        let list = [];
+        let links = {};
         for (var i in requests) {
             let f = requests[i];
-            list.push(['GET', `${BASE_URL}${f.url}`, null, { tags: { name: f.tag } }]);
+            links[f.tag] = { method: 'GET', url: `${BASE_URL}${f.url}` };
         }
-        let responses = http.batch(list);
+        let responses = http.batch(links);
 
         const results = Object.values(responses).map(res => res.status);
 
+        let respHP = responses["AFC HP"];
         const len = results.filter(r => r !== 200).length;
 
         check(results, {
             "Errors": (r) => r.status === 200
         });
+
+        HPTrend.add(respHP.timings.duration);
 
         if (len > 0)
             ErrorCount.add(len);

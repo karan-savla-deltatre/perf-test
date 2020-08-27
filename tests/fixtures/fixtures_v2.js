@@ -14,10 +14,10 @@ let FixturesTrend = new Trend('Fixtures Trend');
 
 export const options = {
     stages: [
-        { target: 100, duration: '30s' },
-        { target: 200, duration: '30s' },
+        { target: 50, duration: '30s' },
         { target: 100, duration: '30s' },
         { target: 50, duration: '30s' },
+        { target: 20, duration: '30s' },
     ],
     thresholds: {
         errors: ["count<10"]
@@ -28,12 +28,12 @@ export default function() {
     const BASE_URL = !!__ENV.HOST ? `${__ENV.HOST}` : "https://www.the-afc.com/";
 
     group('New Fixtures Endpoints', () => {
-        let list = [];
+        let requests = {};
         for (var i in fixtures) {
             let f = fixtures[i];
-            list.push(['GET', `${BASE_URL}${f.url}`, null, { tags: { name: f.tag } }]);
+            requests[f.tag] = { method: 'GET', url: `${BASE_URL}${f.url}` };
         }
-        let responses = http.batch(list);
+        let responses = http.batch(requests);
 
         let respCLFixtures = responses['AFC CL Fixtures'];
 
