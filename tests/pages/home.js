@@ -20,7 +20,8 @@ export const options = {
         { target: 20, duration: '30s' },
     ],
     thresholds: {
-        errors: ["count<10"]
+        errors: ["count<10"],
+        'AFC HP': ['p(95)<700'],
     }
 };
 

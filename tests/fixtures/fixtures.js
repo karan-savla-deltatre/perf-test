@@ -15,10 +15,10 @@ let FixturesTrend = new Trend('Fixtures Trend');
 
 export const options = {
     stages: [
-        { target: 50, duration: '30s' },
-        { target: 100, duration: '30s' },
-        { target: 50, duration: '30s' },
-        { target: 20, duration: '30s' },
+        { target: 1, duration: '5s' },
+        //{ target: 100, duration: '30s' },
+        //{ target: 50, duration: '30s' },
+        //{ target: 20, duration: '30s' },
     ],
     thresholds: {
         errors: ["count<10"]
@@ -50,10 +50,15 @@ export default function() {
 
         FixturesTrend.add(respCLFixtures.timings.duration);
 
+        console.log(JSON.stringify(respCLFixtures));
+        epDataRecv.add(sizeOfHeaders(respCLFixtures.headers) + respCLFixtures.body.length, { url: res.url });
         if (len > 0)
             ErrorCount.add(len);
 
         sleep(2);
     });
 
+    function sizeOfHeaders(hdrs) {
+        return Object.keys(hdrs).reduce((sum, key) => sum + key.length + hdrs[key].length, 0);
+    }
 }

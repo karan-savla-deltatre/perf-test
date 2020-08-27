@@ -9,8 +9,16 @@ const fixtures = [
     //{ url: "live-scores/2020/_livescores_", tag: "Livescores" }
 ]
 
+const hpreqs = [
+    { url: "", tag: "AFC HP" },
+    //{ url: "competitions/afc-cup/fixtures/2020/_allfixtures", tag: "AFC CUP Fixtures" },
+    //{ url: "live-scores/2020/_livescores", tag: "Livescores" }
+]
+
 let ErrorCount = new Counter("errors");
 let FixturesTrend = new Trend('Fixtures Trend');
+let HPTrend = new Trend("AFC HP");
+
 
 export const options = {
     stages: [
@@ -51,7 +59,6 @@ export default function() {
             ErrorCount.add(len);
 
 
-        sleep(2);
+        sleep(7);
     });
-
 }
