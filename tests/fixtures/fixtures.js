@@ -1,6 +1,6 @@
 import http from "k6/http";
 import { check, sleep, group } from "k6";
-import { Counter, Trend } from "k6/metrics";
+import { Rate, Counter, Trend } from "k6/metrics";
 
 
 const fixtures = [
@@ -10,7 +10,7 @@ const fixtures = [
     //{ url: "live-scores/2020/_livescores", tag: "Livescores" }
 ]
 
-let ErrorCount = new Counter("errors");
+let ErrorRate = new Rate("errors");
 let FixturesTrend = new Trend('Fixtures Trend');
 
 export const options = {
@@ -51,9 +51,9 @@ export default function() {
         FixturesTrend.add(respCLFixtures.timings.duration);
 
         console.log(JSON.stringify(respCLFixtures));
-        epDataRecv.add(sizeOfHeaders(respCLFixtures.headers) + respCLFixtures.body.length, { url: res.url });
+
         if (len > 0)
-            ErrorCount.add(len);
+            ErrorRate.add(len / results.length);
 
         sleep(2);
     });

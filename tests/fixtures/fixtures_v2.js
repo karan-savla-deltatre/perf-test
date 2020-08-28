@@ -1,6 +1,6 @@
 import http from "k6/http";
 import { check, sleep, group } from "k6";
-import { Counter, Trend } from "k6/metrics";
+import { Rate, Counter, Trend } from "k6/metrics";
 
 const fixtures = [
     { url: "competitions/afc-champions-league/fixtures/2020/_config", tag: "AFC CL Fixtures" },
@@ -15,20 +15,20 @@ const hpreqs = [
     //{ url: "live-scores/2020/_livescores", tag: "Livescores" }
 ]
 
-let ErrorCount = new Counter("errors");
+let ErrorRate = new Rate("errors");
 let FixturesTrend = new Trend('Fixtures Trend');
 let HPTrend = new Trend("AFC HP");
 
 
 export const options = {
     stages: [
-        { target: 50, duration: '30s' },
-        { target: 100, duration: '30s' },
-        { target: 50, duration: '30s' },
-        { target: 20, duration: '30s' },
+        { target: 10, duration: '10s' },
+        //{ target: 100, duration: '30s' },
+        //{ target: 50, duration: '30s' },
+        //{ target: 20, duration: '30s' },
     ],
     thresholds: {
-        errors: ["count<10"]
+        errors: ["rate<0.1"]
     }
 };
 
@@ -49,15 +49,13 @@ export default function() {
 
         const len = results.filter(r => r !== 200).length;
 
-        check(results, {
-            "Errors": (r) => r.status === 200
+        check(responses['AFC CL Fixtures'], {
+            'Successfull Request': (r) => r.status === 200
         });
 
         FixturesTrend.add(respCLFixtures.timings.duration);
 
-        if (len > 0)
-            ErrorCount.add(len);
-
+        ErrorRate.add(len / results.length);
 
         sleep(7);
     });
