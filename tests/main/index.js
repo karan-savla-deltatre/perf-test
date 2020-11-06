@@ -150,7 +150,7 @@ export default function() {
         let links = {};
         for (var i in dapireqs) {
             let f = dapireqs[i];
-            links[f.tag] = { method: 'GET', url: `${BASE_URL}${f.url}` };
+            links[f.tag] = { method: 'GET', url: `${f.url}` };
         }
         let responses = http.batch(links);
 
